@@ -1,6 +1,9 @@
+// use surrealdb::{Surreal, Connection};
 
 
+mod store;
 
 fn main() {
-    println!("Hello, world!");
+    println!("x");
+
 }
