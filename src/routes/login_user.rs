@@ -3,9 +3,7 @@ use chrono::Utc;
 use rand::Rng;
 
 use crate::models::session::Session;
-use crate::models::users::UserId;
-
-
+use crate::models::users::validate_email;
 
 
 pub fn verify_token(token: String) -> Result<Session, handle_errors::Error> {
@@ -30,7 +28,9 @@ fn verify_password(hash: &str, password: &[u8]) -> Result<bool, argon2::Error> {
     argon2::verify_encoded(hash, password)
 }
 
-fn issue_token(user_id: UserId) -> String {
+fn issue_token(email: String) -> String {
+    let confirmed_email = validate_email(email).expect("Error issuing token");
+
     let current_date_time = Utc::now();
     // token expires in 5 hours
     let expired_dt = current_date_time + chrono::Duration::hours(5);
@@ -40,7 +40,7 @@ fn issue_token(user_id: UserId) -> String {
         .set_encryption_key(&Vec::from("Token has to be exactly 32 bytes".as_bytes()))
         .set_expiration(&expired_dt)
         .set_not_before(&Utc::now())
-        .set_claim("user_id", serde_json::json!(user_id))
+        .set_claim("email", serde_json::json!(confirmed_email))
         .set_subject("Access granted!")
         .build()
         .expect("Failed to construct paseto token w/ builder!")

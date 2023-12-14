@@ -4,29 +4,27 @@ use serde_email::{Email, is_valid_email, EmailError};
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, Hash)]
 pub struct User {
-    user_id: UserId,
-    email: Email,
-    name: String,
-    password: String,
-    role: String,
+    pub email: String,
+    pub name: String,
+    pub password: String,
+    pub role: String,
 }
 
-#[derive(Debug,Serialize, Deserialize, Clone, PartialEq, Eq, Hash)]
-pub struct UserId(pub usize);
-
-// impl Serialize for UserID {
-//     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-//         where
-//             S: serde::Serializer {
-//         serializer.serialize_newtype_struct("user_id", &self.0)
-//     }
-// }
-
-pub fn validate_email(email: String) -> Result<Email, EmailError> {
+#[allow(dead_code)]
+pub fn validate_email(email: String) -> Result<String, EmailError> {
     if is_valid_email(&email) {
         let email = Email::from_string(email).unwrap();
-        return Ok(email);
+        return Ok(email.to_string());
     }
     let invalid_email = EmailError::Invalid { raw_email: email };
     Err(invalid_email)
+}
+
+#[allow(dead_code)]
+pub enum Roles {
+    BusinessAnalyst,
+    ProjectManager,
+    ResourceManager,
+    Sponsor,
+    TeamMember
 }

@@ -1,3 +1,4 @@
+use std::env::VarError;
 
 
 
@@ -5,7 +6,8 @@
 pub enum Error {
     WrongPassword,
     Unauthorized,
-    CannotDecryptToken
+    CannotDecryptToken,
+    EnvironmentVariable(VarError)
 }
 
 impl std::fmt::Display for Error {
@@ -13,7 +15,8 @@ impl std::fmt::Display for Error {
         match &*self {
             Error::CannotDecryptToken => write!(f, "Cannot decrypt token error!"),
             Error::Unauthorized => write!(f, "Unathorized access error!"),
-            Error::WrongPassword => write!(f, "Wrong password error!")
+            Error::WrongPassword => write!(f, "Wrong password error!"),
+            Error::EnvironmentVariable(e) => write!(f, "Error parsing environment variable: {:?}", e)
         }
     }
 }
